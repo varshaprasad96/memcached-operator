@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"os"
 
@@ -24,6 +25,7 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+	"k8s.io/klog"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
@@ -60,10 +62,10 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 
-	// sCert, err := tls.LoadX509KeyPair("/apiserver.local.config/certificates/apiserver.crt", "/apiserver.local.config/certificates/apiserver.key")
-	// if err != nil {
-	// 	klog.Fatal(err)
-	// }
+	sCert, err := tls.LoadX509KeyPair("/apiserver.local.config/certificates/apiserver.crt", "/apiserver.local.config/certificates/apiserver.key")
+	if err != nil {
+		klog.Fatal(err)
+	}
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:             scheme,
@@ -72,9 +74,9 @@ func main() {
 		LeaderElection:     enableLeaderElection,
 		LeaderElectionID:   "86f835c3.example.com",
 		// CertDir:            "/apiserver.local.config/certificates",
-		// WebhookTLSConfig: &tls.Config{
-		// 	Certificates: []tls.Certificate{sCert},
-		// },
+		WebhookTLSConfig: &tls.Config{
+			Certificates: []tls.Certificate{sCert},
+		},
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
