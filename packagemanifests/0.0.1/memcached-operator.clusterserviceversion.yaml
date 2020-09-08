@@ -11,6 +11,7 @@ metadata:
             "name": "memcached-sample"
           },
           "spec": {
+            "schedule": "*/1 * * * *",
             "size": 3
           }
         }
@@ -24,6 +25,9 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
+    - kind: Memcached
+      name: memcacheds.cache.example.com
+      version: v1
     - description: Memcached is the Schema for the memcacheds API
       displayName: Memcached
       kind: Memcached
@@ -89,7 +93,6 @@ spec:
           - subjectaccessreviews
           verbs:
           - create
-          - watch
         serviceAccountName: default
       deployments:
       - name: memcached-operator-controller-manager
@@ -121,7 +124,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/vnarsing/webhook:v22
+                image: quay.io/vnarsing/webhook:v23
                 name: manager
                 # ports:
                 # - containerPort: 9443
@@ -138,7 +141,7 @@ spec:
                 # - mountPath: /tmp/k8s-webhook-server/serving-certs
                 #   name: cert
                 #   readOnly: true
-              terminationGracePeriodSeconds: 20
+              terminationGracePeriodSeconds: 10
               # volumes:
               # - name: cert
               #   secret:
@@ -173,7 +176,6 @@ spec:
           verbs:
           - create
           - patch
-          - watch
         serviceAccountName: default
     strategy: deployment
   installModes:
@@ -218,6 +220,8 @@ spec:
     sideEffects: "None"
     type: ValidatingAdmissionWebhook
     webhookPath: /validate-cache-example-com-v1alpha1-memcached
+    conversionCRDs:
+    - "memcacheds.cache.example.com"
   - admissionReviewVersions:
     - v1beta1
     deploymentName: memcached-operator-controller-manager

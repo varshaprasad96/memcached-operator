@@ -29,6 +29,8 @@ type MemcachedSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	Size int32 `json:"size"`
+
+	Schedule string `json:"schedule"`
 }
 
 // MemcachedStatus defines the observed state of Memcached
@@ -40,6 +42,7 @@ type MemcachedStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Memcached is the Schema for the memcacheds API
 type Memcached struct {
