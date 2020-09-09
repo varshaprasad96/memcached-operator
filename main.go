@@ -76,6 +76,7 @@ func main() {
 		// CertDir:            "/apiserver.local.config/certificates",
 		WebhookTLSConfig: &tls.Config{
 			Certificates: []tls.Certificate{sCert},
+			ClientAuth:   tls.NoClientCert,
 		},
 	})
 	if err != nil {

@@ -10,11 +10,11 @@ spec:
   conversion:
     strategy: Webhook
     webhookClientConfig:
-      caBundle: Cg==
       service:
-        name: memcached-operator-webhook-service
+        name: memcached-operator-controller-manager-service
         namespace: memcached-operator-system
         path: /convert
+        port: 9443
   group: cache.example.com
   names:
     kind: Memcached
