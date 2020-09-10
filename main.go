@@ -29,10 +29,9 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	batchv1 "k8s.io/api/batch/v1"
-
-	cachev1alpha1 "github.com/example/memcached-operator/api/v1alpha1"
-	"github.com/example/memcached-operator/controllers"
+	cachev1 "github.com/example-inc/memcached-operator/api/v1"
+	cachev1beta1 "github.com/example-inc/memcached-operator/api/v1beta1"
+	"github.com/example-inc/memcached-operator/controllers"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -44,8 +43,8 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(cachev1alpha1.AddToScheme(scheme))
-	utilruntime.Must(batchv1.AddToScheme(scheme))
+	utilruntime.Must(cachev1.AddToScheme(scheme))
+	utilruntime.Must(cachev1beta1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -70,10 +69,10 @@ func main() {
 		MetricsBindAddress: metricsAddr,
 		Port:               9443,
 		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "86f835c3.example.com",
-		// CertDir:            "/apiserver.local.config/certificates",
+		LeaderElectionID:   "f1c5ece8.example.com",
 		WebhookTLSConfig: &tls.Config{
 			Certificates: []tls.Certificate{sCert},
+			ClientAuth:   tls.NoClientCert,
 		},
 	})
 	if err != nil {
@@ -89,8 +88,7 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Memcached")
 		os.Exit(1)
 	}
-
-	if err = (&cachev1alpha1.Memcached{}).SetupWebhookWithManager(mgr); err != nil {
+	if err = (&cachev1.Memcached{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Memcached")
 		os.Exit(1)
 	}

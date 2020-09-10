@@ -5,12 +5,26 @@ metadata:
     alm-examples: |-
       [
         {
-          "apiVersion": "cache.example.com/v1alpha1",
+          "apiVersion": "cache.example.com/v1",
           "kind": "Memcached",
           "metadata": {
             "name": "memcached-sample"
           },
           "spec": {
+            "schedule": "*/1 * * * *",
+            "size": 3
+          }
+        },
+        {
+          "apiVersion": "cache.example.com/v1beta1",
+          "kind": "Memcached",
+          "metadata": {
+            "name": "memcached-sample"
+          },
+          "spec": {
+            "schedule": {
+              "minute": "*/1"
+            },
             "size": 3
           }
         }
@@ -28,7 +42,12 @@ spec:
       displayName: Memcached
       kind: Memcached
       name: memcacheds.cache.example.com
-      version: v1alpha1
+      version: v1
+    - description: Memcached is the Schema for the memcacheds API
+      displayName: Memcached
+      kind: Memcached
+      name: memcacheds.cache.example.com
+      version: v1beta1
   description: Memcached Operator description. TODO.
   displayName: Memcached Operator
   icon:
@@ -77,6 +96,7 @@ spec:
           verbs:
           - get
           - list
+          - watch
         - apiGroups:
           - authentication.k8s.io
           resources:
@@ -89,7 +109,6 @@ spec:
           - subjectaccessreviews
           verbs:
           - create
-          - watch
         serviceAccountName: default
       deployments:
       - name: memcached-operator-controller-manager
@@ -121,7 +140,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/vnarsing/webhook:v22
+                image: quay.io/vnarsing/webhook:v28
                 name: manager
                 # ports:
                 # - containerPort: 9443
@@ -138,7 +157,7 @@ spec:
                 # - mountPath: /tmp/k8s-webhook-server/serving-certs
                 #   name: cert
                 #   readOnly: true
-              terminationGracePeriodSeconds: 20
+              terminationGracePeriodSeconds: 10
               # volumes:
               # - name: cert
               #   secret:
@@ -173,13 +192,12 @@ spec:
           verbs:
           - create
           - patch
-          - watch
         serviceAccountName: default
     strategy: deployment
   installModes:
-  - supported: true
+  - supported: false
     type: OwnNamespace
-  - supported: true
+  - supported: false
     type: SingleNamespace
   - supported: false
     type: MultiNamespace
@@ -200,7 +218,8 @@ spec:
   version: 0.0.1
   webhookdefinitions:
   - admissionReviewVersions:
-    - v1beta1
+    - "v1beta1"
+    - "v1"
     deploymentName: memcached-operator-controller-manager
     failurePolicy: Fail
     generateName: vmemcached.kb.io
@@ -209,7 +228,7 @@ spec:
     - apiGroups:
       - cache.example.com
       apiVersions:
-      - v1alpha1
+      - "*"
       operations:
       - CREATE
       - UPDATE
@@ -217,18 +236,21 @@ spec:
       - memcacheds
     sideEffects: "None"
     type: ValidatingAdmissionWebhook
-    webhookPath: /validate-cache-example-com-v1alpha1-memcached
+    webhookPath: /validate-cache-example-com-v1-memcached
+    conversionCRDs:
+    - "memcacheds.cache.example.com"
   - admissionReviewVersions:
-    - v1beta1
+    - "v1beta1"
+    - "v1"
     deploymentName: memcached-operator-controller-manager
-    containerPort: 9443
     failurePolicy: Fail
     generateName: mmemcached.kb.io
+    containerPort: 9443
     rules:
     - apiGroups:
       - cache.example.com
       apiVersions:
-      - v1alpha1
+      - "*"
       operations:
       - CREATE
       - UPDATE
@@ -236,4 +258,4 @@ spec:
       - memcacheds
     sideEffects: "None"
     type: MutatingAdmissionWebhook
-    webhookPath: /mutate-cache-example-com-v1alpha1-memcached
+    webhookPath: /mutate-cache-example-com-v1-memcached
