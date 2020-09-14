@@ -140,7 +140,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/vnarsing/webhook:v28
+                image: quay.io/vnarsing/webhook:v30
                 name: manager
                 # ports:
                 # - containerPort: 9443

@@ -17,7 +17,6 @@ limitations under the License.
 package main
 
 import (
-	"crypto/tls"
 	"flag"
 	"os"
 
@@ -25,7 +24,6 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/klog"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
@@ -59,21 +57,12 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 
-	sCert, err := tls.LoadX509KeyPair("/apiserver.local.config/certificates/apiserver.crt", "/apiserver.local.config/certificates/apiserver.key")
-	if err != nil {
-		klog.Fatal(err)
-	}
-
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:             scheme,
 		MetricsBindAddress: metricsAddr,
 		Port:               9443,
 		LeaderElection:     enableLeaderElection,
 		LeaderElectionID:   "f1c5ece8.example.com",
-		WebhookTLSConfig: &tls.Config{
-			Certificates: []tls.Certificate{sCert},
-			ClientAuth:   tls.NoClientCert,
-		},
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")

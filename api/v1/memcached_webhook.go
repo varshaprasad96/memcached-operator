@@ -25,13 +25,27 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
+const (
+	WebhookPort     = 9443
+	WebhookCertDir  = "/apiserver.local.config/certificates"
+	WebhookCertName = "apiserver.crt"
+	WebhookKeyName  = "apiserver.key"
+)
+
 // log is for logging in this package.
 var memcachedlog = logf.Log.WithName("memcached-resource")
 
 func (r *Memcached) SetupWebhookWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewWebhookManagedBy(mgr).
-		For(r).
-		Complete()
+	bldr := ctrl.NewWebhookManagedBy(mgr).
+		For(r)
+		// Specify OLM CA Info
+	srv := mgr.GetWebhookServer()
+	srv.CertDir = WebhookCertDir
+	srv.CertName = WebhookCertName
+	srv.KeyName = WebhookKeyName
+	srv.Port = WebhookPort
+
+	return bldr.Complete()
 }
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
