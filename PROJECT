@@ -1,11 +1,11 @@
 domain: example.com
 layout: go.kubebuilder.io/v2
 projectName: memcached-operator
-repo: github.com/example-inc/memcached-operator
+repo: github.com/example/memcached-operator
 resources:
 - group: cache
   kind: Memcached
-  version: v1
+  version: v1alpha1
 - group: cache
   kind: Memcached
   version: v1beta1

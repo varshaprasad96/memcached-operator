@@ -30,7 +30,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	cachev1 "github.com/example-inc/memcached-operator/api/v1"
+	cachev1alpha1 "github.com/example/memcached-operator/api/v1alpha1"
 )
 
 // MemcachedReconciler reconciles a Memcached object
@@ -48,9 +48,8 @@ type MemcachedReconciler struct {
 func (r *MemcachedReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
 	log := r.Log.WithValues("memcached", req.NamespacedName)
-
 	// Fetch the Memcached instance
-	memcached := &cachev1.Memcached{}
+	memcached := &cachev1alpha1.Memcached{}
 	err := r.Get(ctx, req.NamespacedName, memcached)
 	if err != nil {
 		if errors.IsNotFound(err) {
@@ -124,7 +123,7 @@ func (r *MemcachedReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 }
 
 // deploymentForMemcached returns a memcached Deployment object
-func (r *MemcachedReconciler) deploymentForMemcached(m *cachev1.Memcached) *appsv1.Deployment {
+func (r *MemcachedReconciler) deploymentForMemcached(m *cachev1alpha1.Memcached) *appsv1.Deployment {
 	ls := labelsForMemcached(m.Name)
 	replicas := m.Spec.Size
 
@@ -178,7 +177,7 @@ func getPodNames(pods []corev1.Pod) []string {
 
 func (r *MemcachedReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&cachev1.Memcached{}).
+		For(&cachev1alpha1.Memcached{}).
 		Owns(&appsv1.Deployment{}).
 		Complete(r)
 }

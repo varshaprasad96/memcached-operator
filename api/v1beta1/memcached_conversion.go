@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	v1 "github.com/example-inc/memcached-operator/api/v1"
-
+	"github.com/example/memcached-operator/api/v1alpha1"
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
 )
 
 func (src *Memcached) ConvertTo(dstRaw conversion.Hub) error {
-	dst := dstRaw.(*v1.Memcached)
+	dst := dstRaw.(*v1alpha1.Memcached)
 
 	sched := src.Spec.Schedule
 	scheduleParts := []string{"*", "*", "*", "*", "*"}
@@ -42,7 +41,7 @@ func (src *Memcached) ConvertTo(dstRaw conversion.Hub) error {
 }
 
 func (dst *Memcached) ConvertFrom(srcRaw conversion.Hub) error {
-	src := srcRaw.(*v1.Memcached)
+	src := srcRaw.(*v1alpha1.Memcached)
 
 	schedParts := strings.Split(src.Spec.Schedule, " ")
 	if len(schedParts) != 5 {

@@ -5,7 +5,7 @@ metadata:
     alm-examples: |-
       [
         {
-          "apiVersion": "cache.example.com/v1",
+          "apiVersion": "cache.example.com/v1alpha1",
           "kind": "Memcached",
           "metadata": {
             "name": "memcached-sample"
@@ -22,15 +22,12 @@ metadata:
             "name": "memcached-sample"
           },
           "spec": {
-            "schedule": {
-              "minute": "*/1"
-            },
-            "size": 3
+            "foo": "bar"
           }
         }
       ]
     capabilities: Basic Install
-    operators.operatorframework.io/builder: operator-sdk-v1.0.0+git
+    operators.operatorframework.io/builder: operator-sdk-v1.2.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
   name: memcached-operator.v0.0.1
   namespace: placeholder
@@ -42,12 +39,12 @@ spec:
       displayName: Memcached
       kind: Memcached
       name: memcacheds.cache.example.com
-      version: v1
+      version: v1beta1
     - description: Memcached is the Schema for the memcacheds API
       displayName: Memcached
       kind: Memcached
       name: memcacheds.cache.example.com
-      version: v1beta1
+      version: v1alpha1
   description: Memcached Operator description. TODO.
   displayName: Memcached Operator
   icon:
@@ -96,7 +93,6 @@ spec:
           verbs:
           - get
           - list
-          - watch
         - apiGroups:
           - authentication.k8s.io
           resources:
@@ -140,7 +136,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/vnarsing/webhook:v30
+                image: quay.io/vnarsing/webhook:v41
                 name: manager
                 # ports:
                 # - containerPort: 9443
@@ -153,10 +149,10 @@ spec:
                   requests:
                     cpu: 100m
                     memory: 20Mi
-                # volumeMounts:
-                # - mountPath: /tmp/k8s-webhook-server/serving-certs
-                #   name: cert
-                #   readOnly: true
+                volumeMounts:
+                - mountPath: /tmp/k8s-webhook-server/serving-certs
+                  name: cert
+                  readOnly: true
               terminationGracePeriodSeconds: 10
               # volumes:
               # - name: cert
@@ -218,44 +214,55 @@ spec:
   version: 0.0.1
   webhookdefinitions:
   - admissionReviewVersions:
-    - "v1beta1"
-    - "v1"
+    - v1beta1
+    containerPort: 443
     deploymentName: memcached-operator-controller-manager
     failurePolicy: Fail
     generateName: vmemcached.kb.io
-    containerPort: 9443
     rules:
     - apiGroups:
       - cache.example.com
       apiVersions:
-      - "*"
+      - v1alpha1
       operations:
       - CREATE
       - UPDATE
       resources:
       - memcacheds
-    sideEffects: "None"
+    sideEffects: None
+    targetPort: 9443
     type: ValidatingAdmissionWebhook
-    webhookPath: /validate-cache-example-com-v1-memcached
-    conversionCRDs:
-    - "memcacheds.cache.example.com"
+    webhookPath: /validate-cache-example-com-v1alpha1-memcached
   - admissionReviewVersions:
-    - "v1beta1"
-    - "v1"
+    - v1beta1
+    - v1alpha1
+    containerPort: 443
     deploymentName: memcached-operator-controller-manager
     failurePolicy: Fail
     generateName: mmemcached.kb.io
-    containerPort: 9443
     rules:
     - apiGroups:
       - cache.example.com
       apiVersions:
-      - "*"
+      - v1alpha1
       operations:
       - CREATE
       - UPDATE
       resources:
       - memcacheds
-    sideEffects: "None"
+    sideEffects: None
+    targetPort: 9443
     type: MutatingAdmissionWebhook
-    webhookPath: /mutate-cache-example-com-v1-memcached
+    webhookPath: /mutate-cache-example-com-v1alpha1-memcached
+  - admissionReviewVersions:
+    - v1alpha1
+    - v1beta1
+    containerPort: 443
+    targetPort: 9443
+    deploymentName: memcached-operator-controller-manager
+    generateName: cmemcached.kb.io
+    sideEffects: None
+    type: ConversionWebhook
+    webhookPath: /convert
+    conversionCRDs:
+    - memcacheds.cache.example.com

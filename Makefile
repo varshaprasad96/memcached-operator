@@ -27,11 +27,13 @@ all: manager
 
 # Run tests
 ENVTEST_ASSETS_DIR=$(shell pwd)/testbin
+ENVTEST_ASSETS_DIR = $(shell pwd)/testbin
 test: generate fmt vet manifests
-	mkdir -p ${ENVTEST_ASSETS_DIR}
-	test -f ${ENVTEST_ASSETS_DIR}/setup-envtest.sh || curl -sSLo ${ENVTEST_ASSETS_DIR}/setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/master/hack/setup-envtest.sh
+	mkdir -p $(ENVTEST_ASSETS_DIR)
+	test -f $(ENVTEST_ASSETS_DIR)/setup-envtest.sh || curl -sSLo $(ENVTEST_ASSETS_DIR)/setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/v0.6.3/hack/setup-envtest.sh
+	source $(ENVTEST_ASSETS_DIR)/setup-envtest.sh; fetch_envtest_tools $(ENVTEST_ASSETS_DIR); setup_envtest_env $(ENVTEST_ASSETS_DIR); mkdir -p ${ENVTEST_ASSETS_DIR} 
+	test -f ${ENVTEST_ASSETS_DIR}/setup-envtest.sh || curl -sSLo ${ENVTEST_ASSETS_DIR}/setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/master/hack/setup-envtest.sh 
 	source ${ENVTEST_ASSETS_DIR}/setup-envtest.sh; fetch_envtest_tools $(ENVTEST_ASSETS_DIR); setup_envtest_env $(ENVTEST_ASSETS_DIR); go test ./... -coverprofile cover.out
-
 
 # Build manager binary
 manager: generate fmt vet
@@ -112,8 +114,8 @@ endif
 
 # Generate bundle manifests and metadata, then validate generated files.
 .PHONY: bundle
-bundle: manifests
-	operator-sdk generate kustomize manifests -q
+bundle: manifests kustomize
+	operator-sdk generate kustomize manifests --interactive=false -q
 	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMG)
 	$(KUSTOMIZE) build config/manifests | operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
 	operator-sdk bundle validate ./bundle
@@ -123,6 +125,13 @@ bundle: manifests
 bundle-build:
 	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
+# UnDeploy controller from the configured Kubernetes cluster in ~/.kube/config 
+# Note that it was added for we are allowed to uninstall the files. However, it will be present by default in the future 
+# versions. 
+undeploy: 
+	$(KUSTOMIZE) build config/default | kubectl delete -f -
+
+ 
 # Options for "packagemanifests". 
 ifneq ($(origin CHANNEL), undefined) 
 PKG_CHANNELS := --channel=$(CHANNEL) 
@@ -133,6 +142,6 @@ endif
 PKG_MAN_OPTS ?= $(PKG_CHANNELS) $(PKG_IS_DEFAULT_CHANNEL) 
 # Generate package manifests. 
 packagemanifests: kustomize manifests 
-	/Users/vnarsing/go/bin/operator-sdk generate kustomize manifests --interactive=false -q --interactive=false 
+	operator-sdk generate kustomize manifests --interactive=false -q --interactive=false 
 	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMG) 
-	$(KUSTOMIZE) build config/manifests | /Users/vnarsing/go/bin/operator-sdk generate packagemanifests -q --version $(VERSION) $(PKG_MAN_OPTS)
+	$(KUSTOMIZE) build config/manifests | operator-sdk generate packagemanifests -q --version $(VERSION) $(PKG_MAN_OPTS)

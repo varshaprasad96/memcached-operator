@@ -4,7 +4,7 @@ metadata:
   annotations:
     alm-examples: '[]'
     capabilities: Basic Install
-    operators.operatorframework.io/builder: operator-sdk-v1.0.0+git
+    operators.operatorframework.io/builder: operator-sdk-v1.2.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
   name: memcached-operator.vX.Y.Z
   namespace: placeholder
@@ -16,7 +16,7 @@ spec:
       displayName: Memcached
       kind: Memcached
       name: memcacheds.cache.example.com
-      version: v1
+      version: v1alpha1
     - description: Memcached is the Schema for the memcacheds API
       displayName: Memcached
       kind: Memcached

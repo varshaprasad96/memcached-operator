@@ -15,7 +15,6 @@ spec:
         name: memcached-operator-controller-manager-service
         namespace: memcached-operator-system
         path: /convert
-        port: 9443
   group: cache.example.com
   names:
     kind: Memcached
@@ -26,9 +25,9 @@ spec:
   scope: Namespaced
   subresources:
     status: {}
-  version: v1
+  version: v1alpha1
   versions:
-  - name: v1
+  - name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Memcached is the Schema for the memcacheds API
@@ -57,7 +56,6 @@ spec:
             description: MemcachedStatus defines the observed state of Memcached
             properties:
               nodes:
-                description: 'INSERT ADDITIONAL STATUS FIELD - define observed state of cluster Important: Run "make" to regenerate code after modifying this file'
                 items:
                   type: string
                 type: array
