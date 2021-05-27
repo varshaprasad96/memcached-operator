@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Memcached Operator authors.
+Copyright 2021.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -39,12 +39,10 @@ type MemcachedStatus struct {
 	Nodes []string `json:"nodes"`
 }
 
-// +kubebuilder:object:root=true
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+//+kubebuilder:object:root=true
+//+kubebuilder:subresource:status
 
 // Memcached is the Schema for the memcacheds API
-// +kubebuilder:subresource:status
-// +kubebuilder:resource:path=memcacheds,scope=Namespaced
 type Memcached struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -53,9 +51,7 @@ type Memcached struct {
 	Status MemcachedStatus `json:"status,omitempty"`
 }
 
-// +kubebuilder:object:root=true
-
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+//+kubebuilder:object:root=true
 
 // MemcachedList contains a list of Memcached
 type MemcachedList struct {
