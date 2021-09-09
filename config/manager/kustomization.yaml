@@ -13,4 +13,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/vnarsing/test-hybrid
-  newTag: v9.106
+  newTag: v9.135
