@@ -14,6 +14,11 @@ spec:
       displayName: Memcached
       kind: Memcached
       name: memcacheds.cache.example.com
+      specDescriptors:
+      - description: Foo is an example field of Memcached. Edit memcached_types.go
+          to remove/update
+        displayName: Size
+        path: size
       version: v1alpha1
   description: test
   displayName: memcached

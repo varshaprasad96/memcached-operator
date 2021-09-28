@@ -8,9 +8,9 @@ resources:
 patchesStrategicMerge:
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix.
 # patches here are for enabling the conversion webhook for each CRD
-- patches/webhook_in_memcacheds.yaml
+# - patches/webhook_in_memcacheds.yaml
 #+kubebuilder:scaffold:crdkustomizewebhookpatch
-- patches/test_in_memcacheds.yaml
+# - patches/test_in_memcacheds.yaml
 
 # [CERTMANAGER] To enable webhook, uncomment all the sections with [CERTMANAGER] prefix.
 # patches here are for enabling the CA injection for each CRD
