@@ -29,16 +29,22 @@ type MemcachedSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of Memcached. Edit memcached_types.go to remove/update
-	//+operator-sdk:csv:customresourcedefinitions:type=spec
-	//+operator-sdk:csv:customresourcedefinitions:type=status
+	//+operator-sdk:csv:customresourcedefinitions:type=spec,order=90
 	Size int32 `json:"size,omitempty"`
+	//+operator-sdk:csv:customresourcedefinitions:type=spec,order=94
+	Val int32 `json:"val,omitempty"`
+	//+operator-sdk:csv:customresourcedefinitions:type=spec,order=91
+	ValTest int32 `json:"valTest,omitempty"`
 }
 
 // MemcachedStatus defines the observed state of Memcached
 type MemcachedStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	//+operator-sdk:csv:customresourcedefinitions:type=status,order=98
 	Nodes []string `json:"nodes,omitempty"`
+	//+operator-sdk:csv:customresourcedefinitions:type=status,order=92
+	NodesTest []string `json:"nodesTest,omitempty"`
 }
 
 //+kubebuilder:object:root=true

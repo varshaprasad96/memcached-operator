@@ -41,6 +41,12 @@ spec:
                   to remove/update
                 format: int32
                 type: integer
+              val:
+                format: int32
+                type: integer
+              valTest:
+                format: int32
+                type: integer
             type: object
           status:
             description: MemcachedStatus defines the observed state of Memcached
@@ -49,6 +55,10 @@ spec:
                 description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
                   of cluster Important: Run "make" to regenerate code after modifying
                   this file'
+                items:
+                  type: string
+                type: array
+              nodesTest:
                 items:
                   type: string
                 type: array

@@ -33,6 +33,17 @@ spec:
           to remove/update
         displayName: Size
         path: size
+      - displayName: Val Test
+        path: valTest
+      - displayName: Val
+        path: val
+      statusDescriptors:
+      - displayName: Nodes Test
+        path: nodesTest
+      - description: 'INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+          Important: Run "make" to regenerate code after modifying this file'
+        displayName: Nodes
+        path: nodes
       version: v1alpha1
   description: test
   displayName: memcached
